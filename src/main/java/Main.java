@@ -1,13 +1,9 @@
 import org.apache.commons.codec.digest.DigestUtils;
+import utils.FileUtils;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 public class Main {
 
@@ -53,11 +49,11 @@ public class Main {
         try {
             String fileContent = readFile();
             String fileHash = getFileHash(fileContent);
+
             byte[] compressedContent = compress(fileContent.getBytes(StandardCharsets.UTF_8));
+            String compressedContentString = new String(compressedContent, StandardCharsets.UTF_8);
 
-            String str = new String(compressedContent, StandardCharsets.UTF_8);
-
-            System.out.println(str);
+            FileUtils.createFile(fileHash, compressedContentString);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
