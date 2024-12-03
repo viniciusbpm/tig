@@ -1,9 +1,12 @@
 import org.apache.commons.codec.digest.DigestUtils;
+import utils.FileCompressionUtils;
 import utils.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 public class Main {
 
@@ -29,31 +32,20 @@ public class Main {
         return DigestUtils.sha1Hex(headerAndContent);
     }
 
-    public static byte[] compress(byte[] input) {
-        Deflater deflater = new Deflater();
-        deflater.setInput(input);
-        deflater.finish();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-
-        while (!deflater.finished()) {
-            int compressedSize = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, compressedSize);
-        }
-
-        return outputStream.toByteArray();
-    }
-
     public static void main(String[] args) {
         try {
             String fileContent = readFile();
             String fileHash = getFileHash(fileContent);
 
-            byte[] compressedContent = compress(fileContent.getBytes(StandardCharsets.UTF_8));
+            byte[] compressedContent = FileCompressionUtils.compress(fileContent.getBytes(StandardCharsets.UTF_8));
             String compressedContentString = new String(compressedContent, StandardCharsets.UTF_8);
 
-            FileUtils.createFile(fileHash, compressedContentString);
+            // FileUtils.createFile(fileHash, compressedContentString);
+            System.out.println(compressedContentString);
+
+            byte[] decompressedContent = FileCompressionUtils.decompress(compressedContent);
+            String originalContent = new String(decompressedContent, StandardCharsets.UTF_8);
+            System.out.println(originalContent);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
