@@ -5,15 +5,35 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class FileUtils {
     private static final String BASE_PATH = "/home/vini/";
 
+    public static void createDirectory(Path path) {
+        try {
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            System.err.println("Error creating folder: " + e.getMessage());
+        }
+    }
+
+    public static void createDirectory(Path path, List<String> subdirectories) {
+        try {
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            System.err.println("Error creating folder: " + e.getMessage());
+        }
+    }
+
     public static boolean createFile(String fileHash, String compressedContent) {
         String folderName = fileHash.substring(0, 2);
         String fileName = fileHash.substring(2);
+
         Path directoryPath = Path.of(BASE_PATH, folderName);
         Path filePath = directoryPath.resolve(fileName);
+
+        createDirectory(directoryPath);
 
         try {
             Files.createDirectories(directoryPath);
